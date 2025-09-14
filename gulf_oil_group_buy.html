@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海湾石油珠泾路站团购优惠</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #0066cc;
+            --secondary: #ff6600;
+            --dark: #1a1a1a;
+            --success: #10b981;
+            --selected: #10b981;
+            --selected-bg: #d1fae5;
+        }
+        
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .text-secondary { color: var(--secondary); }
+        .bg-dark { background-color: var(--dark); }
+        .bg-success { background-color: var(--success); }
+        
+        /* 选中状态样式 */
+        .selected-option {
+            border: 3px solid var(--selected) !important;
+            background-color: var(--selected-bg) !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+        
+        /* 增强文字可读性 */
+        .banner-title {
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        /* 二维码容器 */
+        #share-qrcode img {
+            display: block;
+            margin: 0 auto;
+            border: 10px solid white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 进度条动画 */
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        /* 底部信息 */
+        .footer-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* 页面布局优化 */
+        .section-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* 滚动动画 */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 微信绑定弹窗 -->
+    <div id="wechat-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-weixin text-white text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-4">绑定微信账号</h2>
+                <p class="text-gray-600 mb-6">请输入手机号绑定微信，享受团购优惠</p>
+                
+                <div class="space-y-4">
+                    <input type="tel" id="wechat-phone" placeholder="请输入手机号码" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                
+                <div class="mt-6 space-y-3">
+                    <button onclick="bindWeChat()" 
+                            class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors">
+                        <i class="fab fa-weixin mr-2"></i>确认绑定
+                    </button>
+                    <p class="text-xs text-gray-500">绑定后团购信息将保存7天</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部横幅 - 增强文字可读性 -->
+    <section class="bg-gradient-to-r from-primary via-blue-600 to-blue-700 text-white py-20">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 banner-title">海湾石油珠泾路站团购优惠</h1>
+            <p class="text-2xl mb-8 banner-title">邀请好友一起加油，享受超值折扣</p>
+        </div>
+    </section>
+
+    <!-- 汽油类型选择 - 始终显示 -->
+    <section id="gasoline-section" class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">选择汽油类型</h2>
+            <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="gasoline-option bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer" 
+                     onclick="selectGasoline(92, this)">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-primary mb-2">92号汽油</h3>
+                        <p class="text-3xl font-bold text-secondary mb-2">¥7.09</p>
+                        <div class="space-y-1 text-sm text-gray-500">
+                            <p>• 400元享93折</p>
+                            <p>• 300元享95折</p>
+                            <p>• 200元享96折</p>
+                        </div>
+                        <div class="w-full bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                            选择92号汽油
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="gasoline-option bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer" 
+                     onclick="selectGasoline(95, this)">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-primary mb-2">95号汽油</h3>
+                        <p class="text-3xl font-bold text-secondary mb-2">¥7.54</p>
+                        <div class="space-y-1 text-sm text-gray-500">
+                            <p>• 400元享93折</p>
+                            <p>• 300元享95折</p>
+                            <p>• 200元享96折</p>
+                        </div>
+                        <div class="w-full bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition-colors mt-4">
+                            选择95号汽油
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 加油金额选择 - 始终显示 -->
+    <section id="amount-section" class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">选择加油金额</h2>
+            <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div class="amount-option bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow cursor-pointer" 
+                     onclick="selectAmount(200, this)">
+                    <h3 class="text-xl font-bold mb-2">200元</h3>
+                    <p class="text-secondary font-bold mb-2">享96折</p>
+                    <p class="text-sm text-gray-600 mb-4">实际支付：¥192</p>
+                    <div class="w-full bg-secondary text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                        选择
+                    </div>
+                </div>
+                
+                <div class="amount-option bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow cursor-pointer" 
+                     onclick="selectAmount(300, this)">
+                    <h3 class="text-xl font-bold mb-2">300元</h3>
+                    <p class="text-secondary font-bold mb-2">享95折</p>
+                    <p class="text-sm text-gray-600 mb-4">实际支付：¥285</p>
+                    <div class="w-full bg-secondary text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                        选择
+                    </div>
+                </div>
+                
+                <div class="amount-option bg-white rounded-xl shadow-lg p-6 text-center hover:shadow-xl transition-shadow cursor-pointer" 
+                     onclick="selectAmount(400, this)">
+                    <h3 class="text-xl font-bold mb-2">400元</h3>
+                    <p class="text-secondary font-bold mb-2">享93折</p>
+                    <p class="text-sm text-gray-600 mb-4">实际支付：¥372</p>
+                    <div class="w-full bg-secondary text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                        选择
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 用户信息表单 - 始终显示 -->
+    <section id="form-section" class="py-12">
+        <div class="container mx-auto px-4 max-w-md">
+            <h2 class="text-3xl font-bold text-center mb-8">填写团购信息</h2>
+            <form id="user-form" class="bg-white rounded-xl shadow-lg p-8" onsubmit="submitForm(event)">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                        <input type="text" id="name" required placeholder="请输入您的姓名"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手机号码</label>
+                        <input type="tel" id="phone" required placeholder="请输入手机号码"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">车牌号码</label>
+                        <input type="text" id="plate" required placeholder="请输入车牌号码"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">选择加油站</label>
+                        <select id="station" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">请选择加油站</option>
+                            <option value="珠泾路站">海湾石油珠泾路站</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">汽油类型</label>
+                        <input type="text" id="gasoline-type" readonly 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">加油金额</label>
+                        <input type="text" id="amount" readonly 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100">
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        立即团购
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- 团购进度显示区域 - 始终显示 -->
+    <section id="progress-section" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-md">
+            <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 class="text-2xl font-bold mb-4">我的团购进度</h2>
+                
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg font-semibold" id="progress-display">1/3</span>
+                        <span class="text-sm text-gray-600" id="progress-percentage">33%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                        <div id="progress-bar" class="bg-green-500 h-4 rounded-full" style="width: 33%"></div>
+                    </div>
+                    <p id="progress-status" class="text-sm text-gray-600">还需2人参与</p>
+                </div>
+
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span>发起人（我）</span>
+                        </div>
+                        <span class="text-green-600" id="initiator-status">已参与</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-sm">2</span>
+                            </div>
+                            <span>第2位好友</span>
+                        </div>
+                        <span class="text-gray-400" id="friend2-status">待邀请</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-sm">3</span>
+                            </div>
+                            <span>第3位好友</span>
+                        </div>
+                        <span class="text-gray-400" id="friend3-status">待邀请</span>
+                    </div>
+                </div>
+
+                <div id="qr-display" class="hidden">
+                    <h3 class="text-lg font-semibold mb-4">分享二维码</h3>
+                    <div id="share-qrcode" class="w-48 h-48 mx-auto mb-4"></div>
+                    <p class="text-sm text-gray-600 mb-4">扫描二维码或长按保存图片分享给好友</p>
+                    <p class="text-xs text-gray-500">好友扫码可访问专属页面了解团购详情</p>
+                </div>
+
+                <button onclick="generateShareQR()" id="share-btn"
+                        class="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition-colors">
+                    <i class="fab fa-weixin mr-2"></i>生成分享二维码
+                </button>
+
+                <button onclick="viewMyGroup()" id="view-group-btn" class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors mt-4 hidden">
+                    查看我的团购
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核销说明 -->
+    <section id="about" class="py-12 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-3xl font-bold text-center mb-8">核销说明</h2>
+            <div class="bg-gray-50 p-8 rounded-xl shadow-md">
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                        <span>绑定微信后，团购信息将自动保存7天</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                        <span>成团后，您将收到包含核销码的微信消息</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                        <span>请在一周内前往选定的加油站出示核销码</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                        <span>如有问题，请联系客服：<span class="font-bold text-primary">0512-62886309</span></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部信息区域 -->
+    <footer class="footer-info text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <h3 class="text-xl font-bold mb-4">联系我们</h3>
+                <p class="text-lg mb-2">客服电话：<span class="text-yellow-300 font-bold">0512-62886309</span></p>
+                <p class="text-lg mb-2">团购信息保存截止时间：<span class="text-yellow-300 font-bold" id="deadline-time">绑定微信后7天有效</span></p>
+                <div class="mt-4">
+                    <p class="text-sm">当前北京时间：</p>
+                    <div class="text-2xl font-bold text-yellow-300" id="beijing-time">--:--:--</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let selectedGasoline = null;
+        let selectedAmount = null;
+        let groupBuyData = null;
+        let currentParticipants = 1;
+        let groupId = null;
+        let qrGenerated = false;
+
+        // 生成唯一groupId
+        function generateUniqueGroupId() {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 9);
+            return `group_${timestamp}_${random}`;
+        }
+
+        // 北京时间显示
+        function updateBeijingTime() {
+            const now = new Date();
+            // 获取UTC时间，然后转换为北京时间（UTC+8）
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const beijingTime = new Date(utc + (8 * 60 * 60 * 1000));
+            const timeString = beijingTime.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            document.getElementById('beijing-time').textContent = timeString;
+        }
+
+        setInterval(updateBeijingTime, 1000);
+        updateBeijingTime();
+
+        // 绑定微信
+        function bindWeChat() {
+            const phone = document.getElementById('wechat-phone').value;
+            if (phone && /^1[3-9]\d{9}$/.test(phone)) {
+                localStorage.setItem('wechatPhone', phone);
+                localStorage.setItem('wechatBindTime', Date.now());
+                document.getElementById('wechat-modal').style.display = 'none';
+                alert('微信绑定成功！团购信息将保存7天。');
+            } else {
+                alert('请输入正确的手机号码');
+            }
+        }
+        
+        // 检查微信绑定状态
+        function checkWeChatBinding() {
+            const wechatPhone = localStorage.getItem('wechatPhone');
+            const bindTime = localStorage.getItem('wechatBindTime');
+            const now = Date.now();
+            const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7天的毫秒数
+            
+            // 检查是否超过7天
+            if (bindTime && (now - parseInt(bindTime)) > sevenDays) {
+                localStorage.removeItem('wechatPhone');
+                localStorage.removeItem('wechatBindTime');
+                localStorage.removeItem('groupId');
+                localStorage.removeItem('groupBuyData');
+                return false;
+            }
+            
+            return !!wechatPhone;
+        }
+
+        // 选择汽油类型（带变色和自动跳转）
+        function selectGasoline(type, element) {
+            // 移除其他选中状态
+            document.querySelectorAll('.gasoline-option').forEach(opt => opt.classList.remove('selected-option'));
+            // 添加选中状态
+            element.classList.add('selected-option');
+            
+            selectedGasoline = type;
+            document.getElementById('gasoline-type').value = `${type}号汽油`;
+            
+            // 自动跳转到金额选择
+            setTimeout(() => {
+                document.getElementById('amount-section').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        // 选择加油金额（带变色和自动跳转）
+        function selectAmount(amount, element) {
+            // 移除其他选中状态
+            document.querySelectorAll('.amount-option').forEach(opt => opt.classList.remove('selected-option'));
+            // 添加选中状态
+            element.classList.add('selected-option');
+            
+            selectedAmount = amount;
+            document.getElementById('amount').value = `${amount}元`;
+            
+            // 自动跳转到表单
+            setTimeout(() => {
+                document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        // 提交表单
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                plate: document.getElementById('plate').value,
+                station: document.getElementById('station').value,
+                gasolineType: selectedGasoline || 92,
+                amount: selectedAmount || 200,
+                participants: currentParticipants,
+                maxParticipants: 3
+            };
+
+            groupBuyData = formData;
+            groupId = generateUniqueGroupId();
+            localStorage.setItem('groupId', groupId);
+            localStorage.setItem('groupBuyData', JSON.stringify(formData));
+            
+            updateProgressDisplay();
+            
+            // 自动跳转到进度页面
+            setTimeout(() => {
+                document.getElementById('progress-section').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        // 更新进度显示
+        function updateProgressDisplay() {
+            const percentage = Math.round((currentParticipants / 3) * 100);
+            document.getElementById('progress-display').textContent = `${currentParticipants}/3`;
+            document.getElementById('progress-percentage').textContent = `${percentage}%`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-status').textContent = `还需${3 - currentParticipants}人参与`;
+            
+            // 更新参与者状态
+            if (currentParticipants >= 2) {
+                document.getElementById('friend2-status').textContent = '已参与';
+                document.getElementById('friend2-status').className = 'text-green-600';
+            }
+            if (currentParticipants >= 3) {
+                document.getElementById('friend3-status').textContent = '已参与';
+                document.getElementById('friend3-status').className = 'text-green-600';
+                document.getElementById('progress-status').textContent = '团购已达成！';
+            }
+        }
+
+        // 生成分享二维码
+        function generateShareQR() {
+            if (!groupId) {
+                alert('请先完成团购信息填写');
+                return;
+            }
+
+            // 使用指定的分享网址
+            const shareUrl = 'https://huayifan0204.github.io/wo1ba1ziji1shuai1ku/';
+            
+            // 生成二维码
+            try {
+                const qrcode = qrcode_generate(shareUrl, {
+                    width: 200,
+                    height: 200,
+                    correctLevel: 2
+                });
+                
+                document.getElementById('share-qrcode').innerHTML = qrcode;
+                document.getElementById('qr-display').classList.remove('hidden');
+                document.getElementById('share-btn').textContent = '重新生成二维码';
+                
+                // 添加分享链接显示
+                const linkDisplay = document.createElement('p');
+                linkDisplay.className = 'text-xs text-gray-500 mt-2 break-all';
+                linkDisplay.innerHTML = `分享链接：<a href="${shareUrl}" target="_blank" class="text-blue-500 underline">${shareUrl}</a>`;
+                document.getElementById('qr-display').appendChild(linkDisplay);
+                
+                qrGenerated = true;
+            } catch (error) {
+                console.error('二维码生成失败:', error);
+                alert('二维码生成失败，请稍后重试');
+            }
+        }
+
+        // 模拟微信扫码加入
+        function simulateJoin() {
+            if (currentParticipants < 3) {
+                currentParticipants++;
+                updateProgressDisplay();
+                
+                if (currentParticipants >= 3) {
+                    alert('恭喜！团购已达成，请前往加油站核销');
+                    document.getElementById('view-group-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        // 查看我的团购
+        function viewMyGroup() {
+            alert('团购已达成！请前往海湾石油珠泾路站出示核销码');
+        }
+
+        // 处理页面参数，支持扫码加入团购
+        function handlePageParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const joinGroupId = urlParams.get('join');
+            const gasoline = urlParams.get('gasoline');
+            const amount = urlParams.get('amount');
+            const station = urlParams.get('station');
+            
+            if (joinGroupId && gasoline && amount) {
+                // 检查微信绑定状态
+                if (!checkWeChatBinding()) {
+                    alert('请先绑定微信后再加入团购');
+                    return;
+                }
+                
+                // 模拟加入团购
+                alert(`正在加入团购：${gasoline}号汽油 ${amount}元 ${station || ''}`);
+                // 这里可以添加实际的加入团购逻辑
+                setTimeout(() => {
+                    alert('成功加入团购！');
+                }, 1000);
+            }
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            // 首先检查微信绑定状态
+            const isWeChatBound = checkWeChatBinding();
+            
+            if (!isWeChatBound) {
+                // 显示微信绑定弹窗
+                document.getElementById('wechat-modal').style.display = 'flex';
+            } else {
+                // 隐藏微信绑定弹窗
+                document.getElementById('wechat-modal').style.display = 'none';
+            }
+            
+            // 只有在微信已绑定的情况下才恢复数据
+            if (isWeChatBound) {
+                const savedGroupId = localStorage.getItem('groupId');
+                const savedData = localStorage.getItem('groupBuyData');
+                
+                if (savedData) {
+                    groupBuyData = JSON.parse(savedData);
+                    groupId = savedGroupId;
+                    
+                    // 恢复选择状态（不恢复表单数据）
+                    if (groupBuyData.gasolineType) {
+                        selectedGasoline = groupBuyData.gasolineType;
+                        document.getElementById('gasoline-type').value = `${selectedGasoline}号汽油`;
+                    }
+                    if (groupBuyData.amount) {
+                        selectedAmount = groupBuyData.amount;
+                        document.getElementById('amount').value = `${selectedAmount}元`;
+                    }
+                    
+                    updateProgressDisplay();
+                }
+                
+                // 处理页面参数
+                handlePageParams();
+            }
+        }
+
+        // 二维码生成函数
+        function qrcode_generate(text, options) {
+            try {
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'M'; // 使用中等纠错级别
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(text);
+                qr.make();
+                
+                const cellSize = 6; // 增大像素块大小
+                const margin = 20; // 增大边距
+                const moduleCount = qr.getModuleCount();
+                const size = moduleCount * cellSize + margin * 2;
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = options.width || 200;
+                canvas.height = options.height || 200;
+                const ctx = canvas.getContext('2d');
+                
+                // 清空画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 计算缩放比例
+                const scale = Math.min(canvas.width / size, canvas.height / size);
+                const offsetX = (canvas.width - size * scale) / 2;
+                const offsetY = (canvas.height - size * scale) / 2;
+                
+                ctx.save();
+                ctx.translate(offsetX, offsetY);
+                ctx.scale(scale, scale);
+                
+                // 绘制白色背景
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, size, size);
+                
+                // 绘制二维码
+                ctx.fillStyle = '#000000';
+                for (let row = 0; row < moduleCount; row++) {
+                    for (let col = 0; col < moduleCount; col++) {
+                        if (qr.isDark(row, col)) {
+                            ctx.fillRect(
+                                col * cellSize + margin,
+                                row * cellSize + margin,
+                                cellSize,
+                                cellSize
+                            );
+                        }
+                    }
+                }
+                
+                ctx.restore();
+                
+                return `<img src="${canvas.toDataURL('image/png')}" alt="团购分享二维码" width="${options.width || 200}" height="${options.height || 200}" style="border: 2px solid #e5e7eb; border-radius: 8px;">`;
+            } catch (error) {
+                console.error('二维码生成错误:', error);
+                throw new Error('二维码生成失败');
+            }
+        }
+    </script>
+</body>
+</html>
